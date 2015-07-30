@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Practical and Stupidly Impractical Groovy DSLs</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="reveal.js/css/reveal.css" rel="stylesheet"><link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"><link href="reveal.js/lib/css/zenburn.css" rel="stylesheet"><script type="text/javascript">document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script><link rel="stylesheet" href="styles/font-awesome.min.css" />
+<link rel="stylesheet" href="styles/gr8conf.css" /></head><body><div class="reveal"><div class="slides"><section id="title" data-background="#b41f1f"><h2>Practical and Stupidly Impractical Groovy DSLs</h2><div class="paragraph" id="author"><p>Craig Burke</p></div>
+<div class="imageblock" id="title-logo" style=""><div class="content"><img src="images/gr8uslogo.png" alt="gr8uslogo"></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Give a little background on Domain Specific Languages (DSLs)</p></li><li><p>Some examples to give some inspiration for creating your own DSLs</p></li></ul></div></aside></section>
+<section id="_about_me"><h2>About Me</h2><div class="ulist"><ul><li><p><span class="icon"><i class="fa fa-university"></i></span> Groovy/Grails Developer at Carnegie Mellon</p></li><li><p><span class="icon"><i class="fa fa-file-pdf-o"></i></span> Creator of the Groovy Document Builder</p></li></ul></div>
+<div class="ulist"><ul><li><p><span class="icon"><i class="fa fa-globe"></i></span> www.craigburke.com</p></li><li><p><span class="icon"><i class="fa fa-twitter"></i></span> @craigburke1</p></li></ul></div></section>
+<section><section id="_introduction"><h2>Introduction</h2><div class="paragraph subheading"><p>Background and Definitions</p></div></section><section id="_what_is_a_dsl"><h2>What is a DSL?</h2><div class="quoteblock"><blockquote>A Domain Specific Language (DSL) is a computer programming language of <strong>limited expressiveness</strong> focused on a <strong>particular domain</strong>.</blockquote><div class="attribution">&#8212; Martin Fowler</div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Looking at the definition it&#8217;s fairly broad</p></li><li><p>Think of it like a mini-language for a particular domain or context</p></li></ul></div></aside></section><section id="_what_is_a_dsl_2"><h2>What is a DSL?</h2><div class="paragraph"><p>Makes use of the <strong>language and metaphors</strong> used by <strong>domain experts</strong></p></div>
+<aside class="notes"><div class="ulist"><ul><li><p>The important to note that this limited language is one that it&#8217;s designed to use language and metaphors
+of the domain experts that are the users of the DSL.</p></li><li><p>The users are not necessarily programmers</p></li></ul></div></aside></section><section id="_example_gradle"><h2>Example (Gradle)</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="gradle language-gradle">apply plugin: 'groovy'
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.codehaus.groovy:groovy-all:2.4.4'
+  runtime 'org.postgresql:postgresql:9.4-1201-jdbc41'
+}</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Gradle is a build tool so that&#8217;s the specific domain or context</p></li><li><p>Concepts like repositories, runtime or compile-time dependencies.</p></li></ul></div></aside></section><section id="_example_sql"><h2>Example (SQL)</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="sql language-sql">INSERT INTO EMPLOYEE (ID, NAME) VALUES (1, 'Craig Burkee');
+
+UPDATE EMPLOYEE SET NAME = 'Craig Burke' WHERE ID = 1;
+
+SELECT ID, NAME FROM EMPLOYEE;
+
+DELETE FROM EMPLOYEE WHERE ID = 1;</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>With SQL is a language in the context of a database with the limited purpose of manipulating or creating data.</p></li></ul></div></aside></section><section id="_example_css"><h2>Example (CSS)</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="css language-css">p {
+  font-size: 12px;
+  color: #B41F1F;
+}
+
+div.content {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #000000;
+}</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>CSS is a language that relates to the styling of webpages.</p></li></ul></div></aside></section></section>
+<section><section id="_groovy_is_great_for_dsls"><h2>Groovy is Great for DSLs</h2></section><section id="_groovy_features"><h2>Groovy Features</h2><div class="ulist step"><ul><li class="fragment"><p>Simple Syntax (Less Noise)</p></li><li class="fragment"><p>Scripting Support</p></li><li class="fragment"><p>Operator Overloading</p></li><li class="fragment"><p>Meta-Programming</p></li></ul></div></section><section id="_simple_syntax"><h2>Simple Syntax</h2><div class="listingblock fragment"><div class="title">Maps and lists</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">def map = [language: 'Groovy']
+def list = ['foo', 'bar']</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Command chaining and optional parenthesis</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">// equivilent to: say(hello).to('Craig')
+say hello to 'Craig'</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Named arguments</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">class Note {
+  static from(Map args, String name) {
+    println "${name} said ${args.message}"
+  }
+}
+
+Note.from 'Craig Burke', message: 'Hey, how are you?'</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Makes it easier to write mini-languages without the noise</p></li><li><p>Less intimidating to non-programmers</p></li><li><p>Name arguments map must be first parameter</p></li></ul></div></aside></section><section id="_scripting_support"><h2>Scripting Support</h2><div class="listingblock fragment"><div class="title">Java code to print a String</div><div class="content"><pre class="highlight"><code class="java language-java">public class ScriptClass {
+
+  public static void main(String[] args) {
+    System.out.println("Hello World");
+  }
+
+}</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Equivalent Groovy Code</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">println 'Hello World'</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Groovy version can be run without compiling</div><div class="content"><pre class="highlight"><code class="bash language-bash">groovy script.groovy</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>If the goal is to make is accessible enough for non-programmer domain experts to use your DSL, the noise is both distracting and intimidating.</p></li></ul></div></aside></section><section id="_operator_overloading"><h2>Operator Overloading</h2><table class="tableblock frame-all grid-all operators" style="width:50%"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a + b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.plus(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a - b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.minus(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a * b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.multiply(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a ** b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.power(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a / b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.div(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a % b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.mod(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a | b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.or(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a &amp; b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.and(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a ^ b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.xor(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a or a</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.next()</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a-- or --a</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.previous()</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a &lt;&lt; b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.leftShift(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a &gt;&gt; b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.rightShift(b)</p></td></tr><tr><td class="tableblock halign-left valign-top"><p class="tableblock">a &lt;&#8658; b</p></td><td class="tableblock halign-left valign-top"><p class="tableblock">a.compareTo(b)</p></td></tr></tbody></table></section><section id="_getters_and_setters"><h2>Getters and Setters</h2><div class="listingblock fragment"><div class="content"><pre class="highlight"><code class="groovy language-groovy">class Person {
+  String name
+  String nickName
+}
+Person person = new Person()</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Equivilent to person.setName('Craig')</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">person.name = 'Craig'</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Equivilent to println person.getName()</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">println person.name</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Equivilent to person.setNickName(person.getName())</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">person.nickName = person.name</code></pre></div></div></section><section id="_dynamic_properties"><h2>Dynamic Properties</h2><div class="listingblock fragment"><div class="title">Extending the Number class</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">Number.metaClass.getDollars = { delegate as BigDecimal }
+
+Number.metaClass.getProperty = { String name -&gt;
+  def rates = [euros: 1.1f, pesos: 0.063f]
+  delegate * (rates[name] as BigDecimal)
+}</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Adding different currencies together</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">def total = 20.dollars + 40.euros + 200.pesos
+assert total == 76.60</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>You’re not limited by the syntax and can add arbitrary methods or properties where you need them.</p></li></ul></div></aside></section><section id="_dynamic_methods"><h2>Dynamic Methods</h2><div class="listingblock source groovy fragment"><div class="content"><pre class="highlight"><code>class Person {
+  def methodMissing(String name, args) {
+    if (name.startsWith('say')) {
+      String message = (name - 'say').trim()
+      println message
+    }
+  }
+}</code></pre></div></div>
+<div class="listingblock source groovy fragment"><div class="title">Trying out our dynamic method</div><div class="content"><pre class="highlight"><code>Person you = new Person()
+you.sayHello()
+you."say Craig is Awesome"()</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>If you class implements GroovyInterceptable you can intercept all method calls (not just missing ones)</p></li></ul></div></aside></section><section id="_closure_delegation"><h2>Closure Delegation</h2><div class="listingblock fragment"><div class="title">Defining a simple closure</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">Closure myClosure = {
+  name = 'Craig'
+  printName()
+}</code></pre></div></div>
+<div class="listingblock fragment"><div class="title">Methods and properties set to resolve to a NamePrinter object</div><div class="content"><pre class="highlight"><code class="groovy language-groovy">class NamePrinter {
+  String name
+
+  void printName() {
+    println "My Name is ${name}!!!"
+  }
+}
+
+myClosure.delegate = new NamePrinter()
+myClosure.resolveStrategy = Closure.DELEGATE_FIRST
+myClosure()</code></pre></div></div></section></section>
+<section><section id="_let_s_get_serious"><h2>Let&#8217;s Get Serious</h2><div class="paragraph subheading fragment"><p>(Not Really)</p></div><div class="imageblock thumb fragment" style=""><div class="content"><img src="images/dane-cook.jpg" alt="dane cook"></div><div class="title">Figure 1. Dane Cook: the Dane Cook of Comedy</div></div></section><section id="_who_is_dane_cook"><h2>Who is Dane Cook?</h2><div class="ulist step dane"><ul><li class="fragment"><p><span class="icon"><i class="fa fa-thumbs-o-up"></i></span>Comedy Albums Have Sold Millions <span class="image retaliation"><img src="images/retaliation.jpg" alt="retaliation"></span></p></li><li class="fragment"><p><span class="icon"><i class="fa fa-thumbs-o-up"></i></span>Voice of Dusty Crophopper from Planes <span class="image dusty"><img src="images/dusty-planes.png" alt="dusty-planes"></span></p></li><li class="fragment"><p><span class="icon"><i class="fa fa-thumbs-o-up"></i></span>Estimated Net Worth of $30 million</p></li><li class="fragment"><p><span class="icon"><i class="fa fa-thumbs-o-up"></i></span>Rides Around in a Sweet Lamborghini</p></li></ul></div></section><section id="__span_class_hideheader_twitter_smackdown_span"><h2><span class="hideheader">Twitter Smackdown</span></h2><div class="imageblock tweet" style=""><div class="content"><img src="images/twitter.png" alt="twitter"></div></div></section><section id="_a_proposed_dsl"><h2>A Proposed DSL</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>'Dane Cook sucks'.watch { tweetedStatus -&gt;
+    tweet 'Hey @DaneCook, somebody said this:' &lt;&lt; tweetedStatus
+    tweet "LEAVE DANE ALONE, @${tweetedStatus.user.screenName}!!!"
+}</code></pre></div></div></section></section>
+<section><section id="_case_study_groovy_document_builder"><h2>Case Study: Groovy Document Builder</h2></section><section id="_generating_documents_in_java"><h2>Generating Documents In Java</h2><div class="imageblock fragment" style=""><div class="content"><img src="images/car.gif" alt="car"></div></div></section><section id="_requirements"><h2>Requirements</h2><div class="ulist step"><ul><li class="fragment"><p>Simple and Readable DSL for Document Creation</p></li><li class="fragment"><p>Use Same Code for Word or Pdf Documents</p></li><li class="fragment"><p>Shouldn&#8217;t Require Knowledge of a Complex Library</p></li></ul></div></section><section id="__span_class_hideheader_proof_of_concept_span"><h2><span class="hideheader">Proof Of Concept</span></h2><div class="imageblock tweet" style=""><div class="content"><img src="images/groovy-doc-twitter.png" alt="groovy doc twitter"></div></div></section><section id="_early_dsl"><h2>Early DSL</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">builder.generate {
+  paragraph 'OMFG! Look at the cat!'
+  picture kitty, [name: 'kitty.png', width: 354, height: 290]
+  paragraph 'That cat is amazing!!!'
+}</code></pre></div></div></section><section id="_simple_implementation"><h2>Simple Implementation</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>class DocumentBuilder {
+  File file
+
+  Document(File file) {
+    this.file = file
+  }
+
+  void generate(Closure builder) {
+    builder.delegate = this
+    builder()
+  }
+
+  abstract void paragraph(String text)
+  abstract void picture(Map params = [:], byte[] data)
+}</code></pre></div></div></section><section id="_that_works_for_a_simple_proof_of_concept"><h2>That Works for a Simple Proof of Concept&#8230;&#8203;</h2></section><section id="_but_things_get_complicated"><h2>But Things Get Complicated</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">builder.generate {
+  paragraph 'Check out this table'
+
+  table {
+    row {
+      cell 'First Name'
+      cell 'Last Name'
+    }
+
+    row {
+      cell 'Craig'
+      cell 'Burke'
+    }
+  }
+}</code></pre></div></div></section><section id="_i_need_to_make_builder"><h2>I Need To Make Builder</h2></section><section id="_builder_support"><h2>Builder Support</h2><div class="ulist step"><ul><li class="fragment"><p>Closure Delegation</p></li><li class="fragment"><p>BuilderSupport</p></li><li class="fragment"><p>FactoryBuilderSupport</p></li></ul></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Setting a closure delegation works well for simple DSLs without nested closures</p></li><li><p>BuilderSupport is good for a small set of defined methods</p></li><li><p>FactoryBuilderSupport is good for a larger set of methods</p></li></ul></div></aside></section><section id="_buildersupport"><h2>BuilderSupport</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="groovy language-groovy">class MyBuilder extends BuilderSupport {
+  def createNode(name) { /* TODO */ }
+  def createNode(name, value) { /* TODO */ }
+  def createNode(name, Map attributes) { /* TODO */ }
+  def createNode(name, Map attributes, value) { /* TODO */ }
+  void setParent(parent, child) { /* TODO */ }
+  void nodeCompleted(parent, node) { /* TODO */ }
+}</code></pre></div></div>
+<aside class="notes"><div class="ulist"><ul><li><p>Works well for a small number of tags</p></li><li><p>Works well for something like an XML builder where the name of the tag is metadata</p></li></ul></div></aside></section><section id="_factorybuildersupport"><h2>FactoryBuilderSupport</h2><div class="paragraph subheading"><p>Now We&#8217;re Talking</p></div></section></section>
+<section><section id="_grails_domain_class"><h2>Grails domain class</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>class User {
+
+  String firstName
+  String lastName
+  Date birthDate
+
+  static constraints = {
+    firstName blank:false
+    lastName blank:false
+    birthDate nullable:false
+  }
+
+}</code></pre></div></div></section><section id="__span_class_icon_i_class_fa_fa_trash_i_span_let_s_trash_this_code"><h2><span class="icon"><i class="fa fa-trash"></i></span> Let&#8217;s Trash This Code</h2></section><section id="_original"><h2>Original</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>class User {
+  String firstName
+  String lastName
+  Date birthDate
+
+  static constraints = {
+    firstName blank:false
+    lastName blank:false
+    birthDate nullable:false
+  }
+
+}</code></pre></div></div></section><section id="_explicit_types"><h2>Explicit Types</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>class User {
+  String firstName
+  String lastName
+  Date birthDate
+
+  static Closure constraints = {
+    firstName([blank:false])
+    lastName([blank:false])
+    birthDate([nullable:false])
+  }
+
+}</code></pre></div></div></section><section id="_why_stop_there"><h2>Why Stop There?</h2><div class="listingblock source groovy"><div class="content"><pre class="highlight"><code>class User {
+  String firstName
+  String lastName
+  Date birthDate
+
+  static Closure constraints = {
+    Map nameConstrants = [blank:false]
+
+    ['firstName', 'lastName'].each {
+      "${it}"(nameContraints)
+    }
+
+    delegate.birthDate([nullable:false])
+  }
+
+}</code></pre></div></div></section></section>
+<section id="_resources"><h2>Resources</h2><div class="paragraph subheading"><p>Books</p></div>
+<div class="ulist resources"><ul><li><p><span class="icon"><i class="fa fa-book"></i></span>Domain-Specific Languages (Martin Fowler)</p><div class="ulist"><ul><li><p><a href="http://www.amazon.com/Domain-Specific-Languages-Addison-Wesley-Signature-Series/dp/0321712943" class="bare">http://www.amazon.com/Domain-Specific-Languages-Addison-Wesley-Signature-Series/dp/0321712943</a></p></li></ul></div></li><li><p><span class="icon"><i class="fa fa-book"></i></span>Groovy for Domain-Specific Languages (Fergal Dearle)</p><div class="ulist"><ul><li><p><a href="http://www.amazon.com/Groovy-Domain-Specific-Languages-Fergal-Dearle/dp/184719690X" class="bare">http://www.amazon.com/Groovy-Domain-Specific-Languages-Fergal-Dearle/dp/184719690X</a></p></li></ul></div></li></ul></div>
+<div class="paragraph subheading"><p>Presentations</p></div>
+<div class="ulist resources"><ul><li><p><span class="icon"><i class="fa fa-bullhorn"></i></span>Groovy Domain Specific Languages</p><div class="ulist"><ul><li><p><a href="http://www.infoq.com/presentations/groovy-dsl-mars" class="bare">http://www.infoq.com/presentations/groovy-dsl-mars</a></p></li></ul></div></li><li><p><span class="icon"><i class="fa fa-bullhorn"></i></span>DSL&#8217;ing your Groovy</p><div class="ulist"><ul><li><p><a href="https://www.youtube.com/watch?v=SfrEThI_m7g" class="bare">https://www.youtube.com/watch?v=SfrEThI_m7g</a></p></li></ul></div></li></ul></div>
+<div class="paragraph subheading"><p>Links</p></div>
+<div class="ulist resources"><ul><li><p><span class="icon"><i class="fa fa-globe"></i></span>Domain-Specific Languages (Groovy Docs)</p><div class="ulist"><ul><li><p><a href="http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html" class="bare">http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html</a></p></li></ul></div></li></ul></div></section>
+<section id="_thank_you"><h2>Thank You</h2></section></div></div><script src="reveal.js/lib/js/head.min.js"></script><script src="reveal.js/js/reveal.js"></script><script type="text/javascript">// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: true,
+  // Display a presentation progress bar
+  progress: true,
+  // Display the page number of the current slide
+  slideNumber: false,
+  // Push each slide change to the browser history
+  history: false,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, black, league, night, serif, simple, sky, solarized, white)
+  // NOTE setting the theme in the config no longer works in reveal.js 3.x
+  //theme: Reveal.getQueryHash().theme || 'white',
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: Reveal.getQueryHash().transition || 'slide',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 960,
+  height: 700,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+});</script><div id="footer">
+	Practical and Stupidly Impractical Groovy DSLs
+</div></body></html>

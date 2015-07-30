@@ -1,3 +1,0 @@
-document {
-	paragraph 'Hello World'
-}
