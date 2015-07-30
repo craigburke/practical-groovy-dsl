@@ -1,0 +1,221 @@
+== Groovy is Great for DSLs
+
+=== Groovy Features
+
+[.step]
+* Simple Syntax (Less Noise)
+* Scripting Support
+* Operator Overloading
+* Meta-Programming
+
+=== Simple Syntax
+
+[source,groovy,role='fragment']
+.Maps and lists
+----
+def map = [language: 'Groovy']
+def list = ['foo', 'bar']
+----
+
+[source,groovy,role='fragment']
+.Command chaining and optional parenthesis
+----
+// equivilent to: say(hello).to('Craig')
+say hello to 'Craig' 
+----
+
+[source,groovy,role='fragment']
+.Named arguments
+----
+class Note {
+  static from(Map args, String name) {
+    println "${name} said ${args.message}"
+  }
+}
+
+Note.from 'Craig Burke', message: 'Hey, how are you?'
+----
+
+[NOTE.speaker]
+--
+* Makes it easier to write mini-languages without the noise
+* Less intimidating to non-programmers
+* Name arguments map must be first parameter
+--
+
+=== Scripting Support
+
+[source,java,role='fragment']
+.Java code to print a String
+----
+public class ScriptClass {
+
+  public static void main(String[] args) {
+    System.out.println("Hello World");
+  }
+
+}
+----
+
+[source,groovy,role='fragment']
+.Equivalent Groovy Code
+----
+println 'Hello World'
+----
+
+[source,bash,role='fragment']
+.Groovy version can be run without compiling
+----
+groovy script.groovy
+----
+
+[NOTE.speaker]
+--
+* If the goal is to make is accessible enough for non-programmer domain experts to use your DSL, the noise is both distracting and intimidating.
+--
+
+=== Operator Overloading
+
+[role='operators',width=50]
+|===
+
+| a + b       | a.plus(b)
+
+| a - b       | a.minus(b)
+
+| a * b       | a.multiply(b)
+
+| a ** b      | a.power(b)
+
+| a / b       | a.div(b)
+
+| a % b       | a.mod(b) 
+
+| a \| b       | a.or(b)
+
+| a & b       | a.and(b)
+
+| a ^ b       | a.xor(b)
+
+| a++ or ++a  | a.next()
+
+| a-- or --a  | a.previous()
+
+| a << b      | a.leftShift(b)
+
+| a >> b      | a.rightShift(b)
+
+| a <=> b     | a.compareTo(b)
+
+|===
+
+
+=== Getters and Setters
+
+[source,groovy,role='fragment']
+----
+class Person {
+  String name
+  String nickName
+}
+Person person = new Person()
+----
+
+[source,groovy,role='fragment']
+.Equivilent to person.setName('Craig')
+----
+person.name = 'Craig' 
+----
+
+[source,groovy,role='fragment']
+.Equivilent to println person.getName()
+----
+println person.name
+----
+
+[source,groovy,role='fragment']
+.Equivilent to person.setNickName(person.getName())
+----
+person.nickName = person.name
+----
+ 
+=== Dynamic Properties
+
+[source,groovy,role='fragment']
+.Extending the Number class
+----
+Number.metaClass.getDollars = { delegate as BigDecimal }
+
+Number.metaClass.getProperty = { String name ->
+  def rates = [euros: 1.1f, pesos: 0.063f]
+  delegate * (rates[name] as BigDecimal)
+}
+----
+
+[source,groovy,role='fragment']
+.Adding different currencies together
+----
+def total = 20.dollars + 40.euros + 200.pesos
+assert total == 76.60
+----
+
+[NOTE.speaker]
+--
+* You’re not limited by the syntax and can add arbitrary methods or properties where you need them.
+--
+
+=== Dynamic Methods
+
+[.source.groovy.fragment]
+----
+class Person {
+  def methodMissing(String name, args) {
+    if (name.startsWith('say')) {
+      String message = (name - 'say').trim()
+      println message
+    }
+  }
+}
+----
+
+[.source.groovy.fragment]
+.Trying out our dynamic method
+----
+Person you = new Person()
+you.sayHello()
+you."say Craig is Awesome"()
+----
+
+[NOTE.speaker]
+--
+* If you class implements GroovyInterceptable you can intercept all method calls (not just missing ones)
+--
+
+=== Closure Delegation
+
+[source,groovy,role='fragment']
+.Defining a simple closure
+----
+Closure myClosure = {
+  name = 'Craig'
+  printName()
+}
+----
+
+[source,groovy,role='fragment']
+.Methods and properties set to resolve to a NamePrinter object
+----
+class NamePrinter {
+  String name
+
+  void printName() {
+    println "My Name is ${name}!!!"
+  }
+}
+
+myClosure.delegate = new NamePrinter()
+myClosure.resolveStrategy = Closure.DELEGATE_FIRST
+myClosure()
+----
+
+

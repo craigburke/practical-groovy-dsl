@@ -1,0 +1,28 @@
+== Resources
+
+[.subheading]
+Books 
+
+[.resources]
+* icon:book[]Domain-Specific Languages (Martin Fowler)
+** http://www.amazon.com/Domain-Specific-Languages-Addison-Wesley-Signature-Series/dp/0321712943
+* icon:book[]Groovy for Domain-Specific Languages (Fergal Dearle)
+** http://www.amazon.com/Groovy-Domain-Specific-Languages-Fergal-Dearle/dp/184719690X
+
+
+[.subheading]
+Presentations
+
+[.resources]
+* icon:bullhorn[]Groovy Domain Specific Languages
+** http://www.infoq.com/presentations/groovy-dsl-mars
+* icon:bullhorn[]DSL'ing your Groovy
+** https://www.youtube.com/watch?v=SfrEThI_m7g
+
+
+[.subheading]
+Links
+
+[.resources]
+* icon:globe[]Domain-Specific Languages (Groovy Docs) 
+** http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html

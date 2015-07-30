@@ -1,0 +1,80 @@
+== Grails domain class
+
+[.source.groovy]
+----
+class User {
+  
+  String firstName
+  String lastName
+  Date birthDate
+	
+  static constraints = {
+    firstName blank:false
+    lastName blank:false
+    birthDate nullable:false
+  }
+	
+}
+
+----
+
+=== icon:trash[] Let's Trash This Code
+
+=== Original
+
+[.source.groovy]
+----
+class User {
+  String firstName
+  String lastName
+  Date birthDate
+	
+  static constraints = {
+    firstName blank:false
+    lastName blank:false
+    birthDate nullable:false
+  }
+
+}
+
+----
+
+=== Explicit Types
+
+[.source.groovy]
+----
+class User {
+  String firstName
+  String lastName
+  Date birthDate
+	
+  static Closure constraints = {
+    firstName([blank:false])
+    lastName([blank:false])
+    birthDate([nullable:false])
+  }
+
+}
+----
+
+=== Why Stop There?
+
+[.source.groovy]
+----
+class User {
+  String firstName
+  String lastName
+  Date birthDate
+	
+  static Closure constraints = {
+    Map nameConstrants = [blank:false]
+	
+    ['firstName', 'lastName'].each {
+      "${it}"(nameContraints)
+    }
+	
+    delegate.birthDate([nullable:false])
+  }
+
+}
+----

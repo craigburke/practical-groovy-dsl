@@ -1,0 +1,87 @@
+== Introduction
+[role="subheading"]
+Background and Definitions
+
+=== What is a DSL?
+
+[quote, Martin Fowler]
+A Domain Specific Language (DSL) is a computer programming language of **limited expressiveness** focused on a **particular domain**.
+
+[NOTE.speaker]
+--
+* Looking at the definition it's fairly broad
+* Think of it like a mini-language for a particular domain or context
+--
+
+=== What is a DSL?
+
+Makes use of the **language and metaphors** used by **domain experts**
+
+[NOTE.speaker]
+--
+* The important to note that this limited language is one that it's designed to use language and metaphors 
+of the domain experts that are the users of the DSL.
+* The users are not necessarily programmers
+--
+
+=== Example (Gradle)
+
+[source,gradle] 
+----
+apply plugin: 'groovy' 
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.codehaus.groovy:groovy-all:2.4.4'
+  runtime 'org.postgresql:postgresql:9.4-1201-jdbc41'
+}
+---- 
+
+[NOTE.speaker]
+--
+* Gradle is a build tool so that's the specific domain or context
+* Concepts like repositories, runtime or compile-time dependencies. 
+--
+
+=== Example (SQL)
+
+[source,sql]
+----
+INSERT INTO EMPLOYEE (ID, NAME) VALUES (1, 'Craig Burkee');
+
+UPDATE EMPLOYEE SET NAME = 'Craig Burke' WHERE ID = 1;
+
+SELECT ID, NAME FROM EMPLOYEE;
+
+DELETE FROM EMPLOYEE WHERE ID = 1;
+----
+
+[NOTE.speaker]
+--
+* With SQL is a language in the context of a database with the limited purpose of manipulating or creating data.
+--
+
+=== Example (CSS)
+
+[source,css]
+----
+p {
+  font-size: 12px;
+  color: #B41F1F;
+}
+
+div.content {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #000000;
+}
+----
+
+[NOTE.speaker]
+--
+* CSS is a language that relates to the styling of webpages. 
+--

@@ -1,0 +1,114 @@
+== Case Study: Groovy Document Builder
+
+=== Generating Documents In Java
+
+[.fragment]
+image::car.gif[]
+
+=== Requirements
+
+[.step]
+* Simple and Readable DSL for Document Creation
+* Use Same Code for Word or Pdf Documents
+* Shouldn't Require Knowledge of a Complex Library
+
+=== [.hideheader]#Proof Of Concept#
+
+image::groovy-doc-twitter.png[role='tweet']
+
+=== Early DSL
+
+[source,groovy]
+----
+builder.generate {
+  paragraph 'OMFG! Look at the cat!'
+  picture kitty, [name: 'kitty.png', width: 354, height: 290]
+  paragraph 'That cat is amazing!!!'
+}
+----
+
+=== Simple Implementation
+
+[.source.groovy]
+----
+class DocumentBuilder {
+  File file
+  
+  Document(File file) {
+    this.file = file
+  }
+
+  void generate(Closure builder) {
+    builder.delegate = this
+    builder()
+  }
+
+  abstract void paragraph(String text)
+  abstract void picture(Map params = [:], byte[] data)
+}
+----
+
+=== That Works for a Simple Proof of Concept...
+
+=== But Things Get Complicated
+
+[source,groovy]
+----
+builder.generate {
+  paragraph 'Check out this table'
+
+  table {
+    row {
+      cell 'First Name'
+      cell 'Last Name'
+    }
+
+    row {
+      cell 'Craig'
+      cell 'Burke'
+    }
+  }
+}
+----
+
+=== I Need To Make Builder 
+
+=== Builder Support
+
+[.step]
+* Closure Delegation
+* BuilderSupport
+* FactoryBuilderSupport
+
+[NOTE.speaker]
+--
+* Setting a closure delegation works well for simple DSLs without nested closures
+* BuilderSupport is good for a small set of defined methods
+* FactoryBuilderSupport is good for a larger set of methods
+--
+
+=== BuilderSupport
+
+[source,groovy]
+----
+class MyBuilder extends BuilderSupport {
+  def createNode(name) { /* TODO */ }	
+  def createNode(name, value) { /* TODO */ }
+  def createNode(name, Map attributes) { /* TODO */ }
+  def createNode(name, Map attributes, value) { /* TODO */ }	
+  void setParent(parent, child) { /* TODO */ }
+  void nodeCompleted(parent, node) { /* TODO */ }
+}
+----
+
+[NOTE.speaker]
+--
+* Works well for a small number of tags
+* Works well for something like an XML builder where the name of the tag is metadata
+--
+
+=== FactoryBuilderSupport
+[.subheading]
+Now We're Talking
+
+

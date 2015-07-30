@@ -1,0 +1,177 @@
+body {
+	background: url('../images/background.png');
+	background-size: 150%;
+}
+
+#title h2 {
+	color: #FFF;
+	text-shadow: 1px 1px 5px #595959;
+	font-size: 2em;
+}
+
+#title #author {
+	color: #FFF;
+}
+
+#title #title-logo img {
+	border: 0;
+}
+
+#footer {
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	padding: 1.5em;
+	padding-top: 2em;
+	position: absolute;
+	text-align: right;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	background: #b41f1f;
+	color: #FFF;
+	text-shadow: 1px 1px 5px #595959;
+	z-index: 29;
+	box-shadow: 20px 20px 50px 20px black;
+}
+
+#footer p {
+	font-size: 3em;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+}
+
+.reveal .quoteblock {
+	background: #FFF;
+	border: 2px solid #595959;
+	padding: 1em;
+}
+
+.reveal .quoteblock .attribution {
+	text-align: right;
+	font-size: .8em;
+}
+
+.reveal .quoteblock blockquote {
+	width: 90%;
+	box-shadow: none;
+}
+
+.reveal h2, .reveal .subheading {
+	color: #b41f1f;
+	text-shadow: 1px 1px 5px #969696;
+} 
+
+.reveal .subheading {
+	margin-top: -.5em;
+}
+
+.reveal .listingblock {
+	margin-bottom: 1.2em;
+}
+
+.reveal .listingblock .title {
+	text-align: left;
+	font-size: .5em;
+	width: 90%;
+	margin: auto;
+	line-height: .2em;
+}
+
+.reveal .controls {
+	bottom: 2em;
+}
+span.icon i {
+	width: 1.2em;
+}
+
+.imageblock .title {
+	font-size: .5em;
+}
+
+div.ulist {
+	text-align: left;
+}
+
+table.tableblock td.tableblock {
+	padding: 8px;
+}
+
+table.operators p.tableblock {
+	font-size: .5em;
+	margin: 0;
+	line-height: .8em;
+}
+
+table.operators tr {
+	background: #FFF;
+}
+
+table.operators tr:nth-child(even) {
+	background: #f9f9f9;
+}
+
+div.resources ul {
+	list-style: none;
+}
+
+div.resources p {
+	font-size: .5em;
+	line-height: .75em;
+	margin-bottom: 0;
+}
+
+div.resources a {
+	line-height: 1em;
+	color: #b41f1f;
+	font-size: .6em;
+}
+
+div.resources ul ul {
+	margin-left: 20px;
+}
+
+div.resources li li p {
+	margin: 0;
+}
+
+div.subhead p {
+	text-align: left;
+	color: #b41f1f;
+	margin-bottom: 8px;
+}
+
+div.tweet {
+	margin-top: -2em;
+	height: 80%;
+}
+
+.dusty, .retaliation {
+	position: absolute;
+	display: block;
+	top: -1em;
+	right: 0;
+}
+
+.dane ul {
+	list-style: none !important;
+}
+
+.retaliation {
+	left: 0;
+}
+
+.dusty {
+	right: 0;
+}
+
+.dusty img, 
+.retaliation img {
+	height: 3em;
+	border: 0 !important;
+	box-shadow: none !important;
+}
+
+.hideheader {
+	display: none;
+}
+
