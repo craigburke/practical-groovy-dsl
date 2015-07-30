@@ -15,6 +15,10 @@ buildscript {
   }
 }
 
+plugins {
+    id 'org.ajoberstar.github-pages' version '1.1.0'
+}
+
 apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'org.ysb33r.vfs'
 apply plugin: 'java'
