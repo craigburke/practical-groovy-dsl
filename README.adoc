@@ -1,7 +1,8 @@
 = Practical and Stupidly Impractical Groovy DSLs
-Craig Burke <craig@craigburke.com>
 
-== Presentation
+Presented by Craig Burke <craig@craigburke.com>
+
+== Slides
 
 * http://www.craigburke.com/practical-groovy-dsl/[Presentation Slides (HTML)]
 
