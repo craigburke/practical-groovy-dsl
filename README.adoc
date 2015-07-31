@@ -1,4 +1,5 @@
 = Practical and Stupidly Impractical Groovy DSLs
+Craig Burke <craig@craigburke.com>
 
 == Presentation
 
