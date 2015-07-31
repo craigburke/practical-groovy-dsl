@@ -20,13 +20,10 @@ class TwitterBot {
 
     private final String RATE_LIMIT_STATUS = '/application/rate_limit_status'
     private final String RATE_LIMIT_SEARCH = '/search/tweets'
-    private final String RATE_LIMIT_FAVORITE = '/favorites/create'
-    private final String RATE_LIMIT_RETWEET = '/statuses/retweet/:id'
     
     private final Long MIN_ACTION_DELAY = 5000L
     private Map lastRun = [:] 
     
-    @Synchronized
     List<Status> search(Map params) {
         checkRateLimit(RATE_LIMIT_SEARCH)
         
@@ -40,37 +37,13 @@ class TwitterBot {
         twitter.search(query).tweets
     }
     
-    @Synchronized
-    void tweet(Map params = [:], String text) {
+    void tweet(String text) {
         StatusUpdate status = new StatusUpdate(text)
-
-        if (params.pictures) {
-            def uploadedPictures = []
-            
-            params.pictures.each { byte[] pictureData ->
-                UploadedMedia picture = twitter.uploadMedia('', new ByteArrayInputStream(pictureData))
-                uploadedPictures << picture.mediaId
-            }
-
-            status.mediaIds = uploadedPictures
-        }
         
         try {
             twitter.updateStatus(status)
         }
         catch (TwitterException ex) { }
-    }
-    
-    @Synchronized
-    void favorite(Status tweet) {
-        checkRateLimit(RATE_LIMIT_FAVORITE)
-        twitter.createFavorite(tweet.id)
-    }
-
-    @Synchronized
-    void retweet(Status tweet) { 
-        checkRateLimit(RATE_LIMIT_RETWEET)
-        twitter.retweetStatus(tweet.id)
     }
     
     private void checkRateLimit(String key) {
@@ -81,7 +54,6 @@ class TwitterBot {
             if (lastRunInterval.toDurationMillis() < MIN_ACTION_DELAY) {
                 return
             }
-            
         }
         lastRun[key] = new DateTime()
         
@@ -119,8 +91,7 @@ String.metaClass.watch = { Map params = [:], Closure closure ->
     String searchText = delegate
     
     Thread.start {
-        Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
-
+		Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
         Long pollDelay = 5000L
 
         Map searchParams = [:]
@@ -135,5 +106,25 @@ String.metaClass.watch = { Map params = [:], Closure closure ->
     }
 }
 
-def shell = new GroovyShell()
+def run = { long delay, Closure closure -> 
+	Thread.start {
+		Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
+
+		while (true) {
+			clonedClosure(it)
+			Thread.sleep delay
+		}
+	}
+}
+
+Number.metaClass.getMinutes = {
+	6000L * delegate
+}
+
+def every = { long delay ->
+	[run: { Closure closure -> run(delay, closure) } ]
+}
+
+def binding = new Binding(every: every, minute: 6000L)
+def shell = new GroovyShell(binding)
 shell.evaluate(new File('command.groovy'))
