@@ -117,13 +117,13 @@ def run = { long delay, Closure closure ->
 }
 
 Number.metaClass.getMinutes = {
-    6000L * delegate
+    60000L * delegate
 }
 
 def every = { long delay ->
     [run: { Closure closure -> run(delay, closure) }]
 }
 
-def binding = new Binding(every: every, minute: 6000L)
+def binding = new Binding(every: every, minute: 60000L)
 def shell = new GroovyShell(binding)
 shell.evaluate(new File('command.groovy'))
