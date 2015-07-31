@@ -5,6 +5,6 @@
 }
 
 // Reassure Dane every 10 minutes
-every 10.minutes run {
-	tweet 'Reminder: you are absolutely hilarious @DaneCook and everyone loves you!'
+every 10.minutes run { 
+    tweet 'Reminder: you are absolutely hilarious @DaneCook and everyone loves you!'
 }

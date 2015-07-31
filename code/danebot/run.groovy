@@ -1,7 +1,6 @@
 @Grab('org.twitter4j:twitter4j-core:4.0.4')
 @Grab('joda-time:joda-time:2.8.1')
 
-import groovy.transform.Synchronized
 import org.joda.time.DateTime
 import org.joda.time.Interval
 
@@ -12,7 +11,6 @@ import twitter4j.StatusUpdate
 import twitter4j.Twitter
 import twitter4j.TwitterException
 import twitter4j.TwitterFactory
-import twitter4j.UploadedMedia
 
 class TwitterBot {
 
@@ -20,13 +18,13 @@ class TwitterBot {
 
     private final String RATE_LIMIT_STATUS = '/application/rate_limit_status'
     private final String RATE_LIMIT_SEARCH = '/search/tweets'
-    
+
     private final Long MIN_ACTION_DELAY = 5000L
-    private Map lastRun = [:] 
-    
+    private Map lastRun = [:]
+
     List<Status> search(Map params) {
         checkRateLimit(RATE_LIMIT_SEARCH)
-        
+
         Query query = new Query(params.searchText)
         query.resultType = Query.ResultType.recent
 
@@ -36,16 +34,17 @@ class TwitterBot {
 
         twitter.search(query).tweets
     }
-    
+
     void tweet(String text) {
         StatusUpdate status = new StatusUpdate(text)
-        
+
         try {
             twitter.updateStatus(status)
         }
-        catch (TwitterException ex) { }
+        catch (TwitterException ex) {
+        }
     }
-    
+
     private void checkRateLimit(String key) {
         DateTime now = new DateTime()
 
@@ -56,22 +55,22 @@ class TwitterBot {
             }
         }
         lastRun[key] = new DateTime()
-        
+
         def statuses = twitter.rateLimitStatus
-        
+
         RateLimitStatus checkStatus = statuses[RATE_LIMIT_STATUS]
         RateLimitStatus status = statuses[key]
-        
+
         if (checkStatus.remaining && status.remaining) {
             return
         }
-        
+
         Long checkStatusSleepTime = (checkStatus.remaining ? 0 : checkStatus.resetTimeInSeconds) * 1000L
         Long statusSleepTime = (status.remaining ? 0 : status.resetTimeInSeconds) * 1000L
 
         now = new DateTime()
         DateTime sleepUntilDate = new DateTime(Math.max(checkStatusSleepTime, statusSleepTime))
-        
+
         if (now < sleepUntilDate) {
             Interval interval = new Interval(now, sleepUntilDate)
             long sleepTime = interval.toDurationMillis() + 1000L
@@ -89,9 +88,9 @@ String.metaClass.leftShift = { Status tweet ->
 
 String.metaClass.watch = { Map params = [:], Closure closure ->
     String searchText = delegate
-    
+
     Thread.start {
-		Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
+        Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
         Long pollDelay = 5000L
 
         Map searchParams = [:]
@@ -106,23 +105,23 @@ String.metaClass.watch = { Map params = [:], Closure closure ->
     }
 }
 
-def run = { long delay, Closure closure -> 
-	Thread.start {
-		Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
+def run = { long delay, Closure closure ->
+    Thread.start {
+        Closure clonedClosure = closure.rehydrate(twitterBot, this, this)
 
-		while (true) {
-			clonedClosure(it)
-			Thread.sleep delay
-		}
-	}
+        while (true) {
+            clonedClosure(it)
+            Thread.sleep delay
+        }
+    }
 }
 
 Number.metaClass.getMinutes = {
-	6000L * delegate
+    6000L * delegate
 }
 
 def every = { long delay ->
-	[run: { Closure closure -> run(delay, closure) } ]
+    [run: { Closure closure -> run(delay, closure) }]
 }
 
 def binding = new Binding(every: every, minute: 6000L)
